@@ -1,0 +1,153 @@
+{
+    "role": [
+        {
+            "id": 1,
+            "nom": "client"
+        },
+        {
+            "id": 2,
+            "nom": "vendeur"
+        }
+    ],
+    "utilisateur": [
+        {
+            "id": 1,
+            "nom": "Fall",
+            "prenom": "Souleymane",
+            "role_id": 2,
+            "email": "souleymanefall176@gmail.com",
+            "password": "okok",
+            "photo": "jules.jpg",
+            "tel": "777151061",
+            "adresse_id": 1
+        },
+        {
+            "id": 2,
+            "nom": "Diallo",
+            "prenom": "Mamadou",
+            "role_id": 2,
+            "email": "mamadoudiallo@gmail.com",
+            "password": "vendeur2024",
+            "photo": "mamadou.jpg",
+            "tel": "775555555",
+            "adresse_id": 2
+        }
+    ],
+    "adresse": [
+        {
+            "id": 1,
+            "pays": "Senegal",
+            "region": "Dakar",
+            "ville": "Keur Massar",
+            "codePostal": "17000"
+        },
+        {
+            "id": 2,
+            "pays": "Senegal",
+            "region": "Thies",
+            "ville": "Mbour",
+            "codePostal": "23000"
+        }
+    ],
+    "categorie": [
+        {
+            "id": 1,
+            "nom": "Electronique",
+            "icone": "fa-solid fa-microchip"
+        },
+        {
+            "id": 2,
+            "nom": "Mode",
+            "icone": "fa-solid fa-child-dress"
+        }
+    ],
+    "boutique": [
+        {
+            "id": 1,
+            "nom": "WorldTech",
+            "description": "Boutique de produits électroniques",
+            "photo": "jules.jpg",
+            "note": 0.7,
+            "adresse_id": 1,
+            "utilisateur_id": 2
+        }
+    ],
+    "produit": [
+        {
+            "id": 1,
+            "nom": "Samsung Galaxy",
+            "description_courte": "Samsung Galaxy S23 Ultra",
+            "prix": 100000,
+            "photo": "samsung.jpg",
+            "quantite": 3,
+            "categorie_id": 1,
+            "boutique_id": 1
+        },
+        {
+            "id": 2,
+            "nom": "IPhone 15",
+            "description_courte": "Apple iPhone 15 Pro Max",
+            "prix": 150000,
+            "photo": "iphone.jpg",
+            "quantite": 3,
+            "categorie_id": 1,
+            "boutique_id": 1
+        },
+        {
+            "id": 3,
+            "nom": "Polos",
+            "description_courte": "Fashion Polos Manches",
+            "prix": 12500,
+            "photo": "polos.jpg",
+            "quantite": 3,
+            "categorie_id": 2,
+            "boutique_id": 1
+        }
+        ,
+        {
+            "id": 4,
+            "nom": "Adidas",
+            "description_courte": "Adidas à lacet",
+            "prix": 12500,
+            "photo": "adidas.jpg",
+            "quantite": 3,
+            "categorie_id": 2,
+            "boutique_id": 1
+        }
+    ],
+    "panier": [
+        {
+            "id": 1,
+            "produits": [
+                {
+                    "produitId": 1,
+                    "quantite": 2
+                },
+                {
+                    "produitId": 3,
+                    "quantite": 1
+                },
+                {
+                    "produitId": 2,
+                    "quantite": 1
+                }
+            ]
+        }
+    ],
+    "commande": [
+        {
+            "id": 1,
+            "utilisateurId": 1,
+            "panierId": 1,
+            "dateCommande": "2024-09-25T10:00:00Z",
+            "statut": "En cours"
+        },
+        {
+            "id": 2,
+            "utilisateurId": 2,
+            "panierId": 2,
+            "dateCommande": "2024-09-26T14:30:00Z",
+            "statut": "Livrée"
+        }
+    ]
+}
