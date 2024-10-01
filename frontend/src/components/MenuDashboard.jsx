@@ -1,12 +1,43 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import '../UserDashboard.css'
+import axios from 'axios'
+import { accountService } from '../services/account.services';
 
 const MenuDashboard = () => {
     const [isExpanded, setIsExpanded] = useState(true)
+    const navigate = useNavigate();
+
     const handleToggle = () => {
         setIsExpanded(!isExpanded);
     };
+
+    const handleDeconnexion = async (e) => {
+        e.preventDefault(); // Empêche le comportement par défaut du formulaire
+
+        const token = localStorage.getItem('token'); // Récupérer le token
+
+        try {
+            // Faire un appel API pour déconnecter l'utilisateur
+            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/logout`, {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`, // Inclure le token dans les en-têtes
+                },
+            });
+
+            // Supprimer le token et l'ID de l'utilisateur du localStorage
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+
+
+
+            // Rediriger l'utilisateur vers la page de connexion
+            navigate('/'); // Remplacez '/login' par la route appropriée
+        } catch (error) {
+            console.error('Erreur lors de la déconnexion:', error);
+            // Gérer l'erreur ici, par exemple en affichant un message à l'utilisateur
+        }
+    }
     return (
         <>
             <aside id="sidebar" className={`${isExpanded ? 'expand' : ''}`}>
@@ -52,10 +83,10 @@ const MenuDashboard = () => {
                     </li>
                 </ul>
                 <div className="sidebar-footer">
-                    <a href="#" className="sidebar-link">
+                    <button type="button" className="no-button sidebar-link btn text-white" onClick={handleDeconnexion}>
                         <i className="lni lni-exit"></i>
                         <span>Logout</span>
-                    </a>
+                    </button>
                 </div>
             </aside>
         </>

@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { CiCamera } from "react-icons/ci";
 
 const Profile = ({ utilisateur }) => {
+    const [userLoaded, setUserLoaded] = useState(false);
 
 
 
@@ -12,7 +13,26 @@ const Profile = ({ utilisateur }) => {
     const [adresse, setAdresse] = useState(utilisateur.adresse)
     const [password, setPassword] = useState(utilisateur.nom)
     const [photo, setPhoto] = useState(utilisateur.photo)
+
+    useEffect(() => {
+        if (utilisateur) {
+            setNom(utilisateur.nom);
+            setPrenom(utilisateur.prenom);
+            setEmail(utilisateur.email);
+            setTel(utilisateur.tel);
+            setAdresse(utilisateur.adresse);
+            setPassword(utilisateur.nom);
+            setPhoto(utilisateur.photo);
+            setUserLoaded(true); // L'utilisateur est chargé
+        }
+    }, [utilisateur]);
+
+    if (!userLoaded) {
+        return <div>Loading...</div>; // Affiche le chargement tant que les données ne sont pas prêtes
+    }
     const imageUrl = new URL(`../assets/images/profil/${utilisateur.photo}`, import.meta.url).href;
+
+
 
     const handlePhotoChange = (event) => {
         const file = event.target.files[0];
