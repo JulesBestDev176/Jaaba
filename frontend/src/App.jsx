@@ -38,6 +38,8 @@ function App() {
     const token = localStorage.getItem('token'); // Récupérer le token
     const userId = localStorage.getItem('userId'); // Récupérer l'ID de l'utilisateur
 
+    produitsRequest();
+
     if (token && userId) {
       axios
         .get(`${import.meta.env.VITE_BACKEND_URL}/users/${userId}`, {
@@ -55,7 +57,18 @@ function App() {
     } else {
       setUser(null); // Si pas de token ou d'ID, définir l'utilisateur sur null
     }
+
+
   }, []);
+
+  const produitsRequest = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/produits`); // Correction ici
+      setProduits(res.data.produits);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des rôles :", error);
+    }
+  };
 
 
 

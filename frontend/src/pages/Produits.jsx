@@ -9,7 +9,7 @@ const Produits = ({ produits, categories }) => {
     if (categories) {
         categorie = categories.find(cat => cat.id === categorieIdNumber);
     }
-    const produitsFiltres = produits.filter(produit => produit.categorie_id === categorieIdNumber);
+    // const produitsFiltres = produits.filter(produit => produit.categorie_id === categorieIdNumber);
 
     return (
         <>

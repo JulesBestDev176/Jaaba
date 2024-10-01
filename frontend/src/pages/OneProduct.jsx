@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import axios from 'axios'
 
 const OneProduct = ({ produits, categories }) => {
 
@@ -8,16 +9,21 @@ const OneProduct = ({ produits, categories }) => {
     const [categorie, setCategorie] = useState(null);
     const [quantite, setQuantite] = useState(1);
 
+    const produitRequest = async () => {
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/produits/${id}`); // Correction ici
+            setProduit(res.data.produit);
+            console.log(res.data.produit)
+        } catch (error) {
+            console.error("Erreur lors de la récupération des produits :", error);
+        }
+    };
+
 
     useEffect(() => {
-        // Simuler une requête vers un backend pour récupérer le produit
-        const produitTrouve = produits.find((prod) => prod.id === parseInt(id));
-        if (produitTrouve) {
-            setProduit(produitTrouve);
-            const categorieTrouvee = categories.find(cat => cat.id === produitTrouve.categorie_id);
-            setCategorie(categorieTrouvee);
 
-        }
+        // Simuler une requête vers un backend pour récupérer le produit
+        produitRequest()
     }, [id, produits, categories]);
 
 
@@ -30,7 +36,7 @@ const OneProduct = ({ produits, categories }) => {
     };
 
 
-    if (!produit || !categorie) {
+    if (!produit) {
         return <p>Chargement...</p>;
     }
     const imageUrl = new URL(`../assets/images/produits/${produit.photo}`, import.meta.url).href;
@@ -49,7 +55,7 @@ const OneProduct = ({ produits, categories }) => {
     return (
         <>
             <div className="">
-                <p className='txt-gray'>Accueil / Produits / {categorie.nom} / {produit.nom} </p>
+                <p className='txt-gray'>Accueil / Produits / {produit.libelle} </p>
             </div>
             <div className="bg-white border-bottom p-3">
                 <div className="row mb-3">
@@ -62,11 +68,11 @@ const OneProduct = ({ produits, categories }) => {
                     <div className="col-6 p-3">
                         <div className="row mb-3">
                             <p className="txt-gray">
-                                {categorie.nom}
+                                {/* {categorie.nom} */}
                             </p>
                         </div>
                         <div className="row">
-                            <h5>{produit.nom}</h5>
+                            <h5>{produit.libelle}</h5>
                         </div>
                         <div className="row mb-3">
                             <div className="col"></div>
@@ -80,7 +86,7 @@ const OneProduct = ({ produits, categories }) => {
                         <div className="row mb-3 p-3">
                             <div className="card bg-info p-3 d-flex justify-content-center border-0" style={{ maxWidth: '18rem' }}>
                                 <div>
-                                    <p className='text-primary'>{produit.description_courte}</p>
+                                    <p className='text-primary'>{produit.description}</p>
                                 </div>
                             </div>
                         </div>

@@ -25,6 +25,7 @@ const Header = ({ categories, roles, paniers, produits }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+    const [categorie, setCategorie] = useState([])
 
     const navigate = useNavigate();
 

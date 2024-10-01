@@ -1,16 +1,24 @@
 import { useState, useEffect, useRef } from 'react';
+import axios from 'axios'
+
 const PageProduits = () => {
-    const [produits, setProduits] = useState([
-        { id: 1, nom: 'Ordinateur portable', prix: 999.99, description: 'Un ordinateur portable haut de gamme.' },
-        { id: 2, nom: 'Smartphone', prix: 699.99, description: 'Un smartphone de dernière génération.' },
-        { id: 3, nom: 'Casque audio', prix: 199.99, description: 'Un casque audio avec réduction de bruit.' },
-    ]);
+    const [produits, setProduits] = useState([]);
+
 
     const [showModal, setShowModal] = useState(false);
     const [currentAction, setCurrentAction] = useState('');
     const [selectedProduct, setSelectedProduct] = useState({ id: null, nom: '', prix: '', description: '' });
 
     const modalRef = useRef(null);
+
+    const produitsRequest = async () => {
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/produits`); // Correction ici
+            setProduits(res.data);
+        } catch (error) {
+            console.error("Erreur lors de la récupération des produits :", error);
+        }
+    };
 
     const handleOpenModal = (action, produit = { id: null, nom: '', prix: '', description: '' }) => {
         setCurrentAction(action);
@@ -66,6 +74,7 @@ const PageProduits = () => {
     };
 
     useEffect(() => {
+        produitsRequest();
         if (showModal) {
             document.addEventListener('mousedown', handleClickOutside);
         } else {
@@ -75,6 +84,8 @@ const PageProduits = () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [showModal]);
+
+
 
     return (
         <div className="container mt-5">

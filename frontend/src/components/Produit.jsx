@@ -19,13 +19,13 @@ const Produit = ({ produit }) => {
                 <div className="col">
                     <div className='row'>
                         <img src={imageUrl}
-                            alt={produit.nom} />
+                            alt={produit.libelle} />
                     </div>
                     <div className="row">
-                        <p>{produit.nom}</p>
+                        <p>{produit.libelle}</p>
                     </div>
                     <div className="row text-center">
-                        <h6>{produit.description_courte}</h6>
+                        <h6>{produit.description}</h6>
                     </div>
                     <div className="row text-center">
                         <h3 className='txt-red'>{produit.prix}</h3>
