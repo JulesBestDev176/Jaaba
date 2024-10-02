@@ -225,12 +225,12 @@ class BoutiqueController extends Controller
         $user = Auth::user();
 
         // Vérifier si l'utilisateur a le rôle "vendeur"
-        if (!$user->hasRole('vendeur')) {
-            return response()->json([
-                'status' => false,
-                'message' => "Seuls les vendeurs peuvent créer une boutique."
-            ], 403);
-        }
+        // if (!$user->hasRole('vendeur')) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => "Seuls les vendeurs peuvent créer une boutique."
+        //     ], 403);
+        // }
 
         //verifier si le vendeur a deja une boutique associee
         $boutique = $user->boutique;
@@ -255,12 +255,12 @@ class BoutiqueController extends Controller
             $user = Auth::user();
 
             // Vérifier si l'utilisateur a le rôle "vendeur"
-            if (!$user->hasRole('vendeur')) {
-                return response()->json([
-                    'status' => false,
-                    'message' => "Seuls les vendeurs peuvent créer une boutique."
-                ], 403);
-            }
+            // if (!$user->hasRole('vendeur')) {
+            //     return response()->json([
+            //         'status' => false,
+            //         'message' => "Seuls les vendeurs peuvent créer une boutique."
+            //     ], 403);
+            // }
 
             // Récupérer la boutique du vendeur
             $boutique = $user->boutique;
@@ -323,12 +323,12 @@ class BoutiqueController extends Controller
             $user = Auth::user();
 
             // Vérifier si l'utilisateur a le rôle "vendeur"
-            if (!$user->hasRole('vendeur')) {
-                return response()->json([
-                    'status' => false,
-                    'message' => "Seuls les vendeurs peuvent supprimer leur boutique."
-                ], 403);
-            }
+            // if (!$user->hasRole('vendeur')) {
+            //     return response()->json([
+            //         'status' => false,
+            //         'message' => "Seuls les vendeurs peuvent supprimer leur boutique."
+            //     ], 403);
+            // }
 
             // Récupérer la boutique
             $boutique = Boutique::findOrFail($id);

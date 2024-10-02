@@ -14,7 +14,8 @@ const PageProduits = () => {
     const produitsRequest = async () => {
         try {
             const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/produits`); // Correction ici
-            setProduits(res.data);
+            setProduits(res.data.produits);
+
         } catch (error) {
             console.error("Erreur lors de la récupération des produits :", error);
         }
@@ -109,7 +110,7 @@ const PageProduits = () => {
                     {produits.map((produit) => (
                         <tr key={produit.id}>
                             <th scope="row">{produit.id}</th>
-                            <td>{produit.nom}</td>
+                            <td>{produit.libelle}</td>
                             <td>{produit.prix}</td>
                             <td>{produit.description}</td>
                             <td>

@@ -127,6 +127,16 @@ const Header = ({ categories, roles, paniers, produits }) => {
         }
     }
 
+    const categoriesRequest = async () => {
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/`); // Correction ici
+            setProduit(res.data.produit);
+            console.log(res.data.produit)
+        } catch (error) {
+            console.error("Erreur lors de la récupération des produits :", error);
+        }
+    }
+
 
 
 
@@ -195,11 +205,23 @@ const Header = ({ categories, roles, paniers, produits }) => {
                             <div className="col-3 text-end d-flex justify-content-around">
                                 {
                                     user ?
-                                        <Link to="/" className='txt-jaune fs-6 m-0'><IoIosFlash /> {user.prenom} {user.nom} </Link>
-                                        :
+                                        (user.role === "client" ?
+                                            <Link to="/compte/profile" className='txt-jaune fs-6 m-0'>
+                                                <IoIosFlash /> {user.prenom} {user.nom}
+                                            </Link> :
+                                            user.role === "vendeur" ?
+                                                <Link to="/userDashboard/profile" className='txt-jaune fs-6 m-0'>
+                                                    <IoIosFlash /> {user.prenom} {user.nom}
+                                                </Link> :
+                                                user.role === "livreur" ?
+                                                    <Link to="/userDashboard/profile" className='txt-jaune fs-6 m-0'>
+                                                        <IoIosFlash /> {user.prenom} {user.nom}
+                                                    </Link> :
+                                                    null
+                                        ) :
                                         <Link to="/" className='txt-jaune fs-6 m-0'><IoIosFlash /> Inconnue </Link>
-
                                 }
+
                                 <Link to="/contact" className='fs-6 m-0 text-white'>Contact</Link>
                             </div>
                         </div>

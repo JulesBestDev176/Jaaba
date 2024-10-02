@@ -6,16 +6,17 @@ const Profile = ({ utilisateur }) => {
 
 
 
-    const [nom, setNom] = useState(utilisateur.nom)
-    const [prenom, setPrenom] = useState(utilisateur.prenom)
-    const [email, setEmail] = useState(utilisateur.email)
-    const [tel, setTel] = useState(utilisateur.tel)
-    const [adresse, setAdresse] = useState(utilisateur.adresse)
-    const [password, setPassword] = useState(utilisateur.nom)
-    const [photo, setPhoto] = useState(utilisateur.photo)
+    const [nom, setNom] = useState('')
+    const [prenom, setPrenom] = useState('')
+    const [email, setEmail] = useState('')
+    const [tel, setTel] = useState('')
+    const [adresse, setAdresse] = useState('')
+    const [password, setPassword] = useState('')
+    const [photo, setPhoto] = useState('')
 
     useEffect(() => {
         if (utilisateur) {
+
             setNom(utilisateur.nom);
             setPrenom(utilisateur.prenom);
             setEmail(utilisateur.email);
@@ -23,13 +24,15 @@ const Profile = ({ utilisateur }) => {
             setAdresse(utilisateur.adresse);
             setPassword(utilisateur.nom);
             setPhoto(utilisateur.photo);
-            setUserLoaded(true); // L'utilisateur est chargé
+            setUserLoaded(true);// L'utilisateur est chargé
         }
+
     }, [utilisateur]);
 
     if (!userLoaded) {
         return <div>Loading...</div>; // Affiche le chargement tant que les données ne sont pas prêtes
     }
+
     const imageUrl = new URL(`../assets/images/profil/${utilisateur.photo}`, import.meta.url).href;
 
 

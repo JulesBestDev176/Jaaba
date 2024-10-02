@@ -13,7 +13,6 @@ const OneProduct = ({ produits, categories }) => {
         try {
             const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/produits/${id}`); // Correction ici
             setProduit(res.data.produit);
-            console.log(res.data.produit)
         } catch (error) {
             console.error("Erreur lors de la récupération des produits :", error);
         }

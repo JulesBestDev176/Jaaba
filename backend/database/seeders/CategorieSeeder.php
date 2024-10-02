@@ -13,15 +13,15 @@ class CategorieSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('categories')->insert([
-            'nomCategorie' => "Alimentaire",
+        // DB::table('categories')->insert([
+        //     'nomCategorie' => "Alimentaire",
 
-        ]);
-        DB::table('categories')->insert([
-            'nomCategorie' => "Cosmétique",
-        ]);
-        DB::table('categories')->insert([
-            'nomCategorie' => "Electronique",
-        ]);
+        // ]);
+        // DB::table('categories')->insert([
+        //     'nomCategorie' => "Cosmétique",
+        // ]);
+        // DB::table('categories')->insert([
+        //     'nomCategorie' => "Electronique",
+        // ]);
     }
 }
