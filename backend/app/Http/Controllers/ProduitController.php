@@ -100,14 +100,14 @@ class ProduitController extends Controller
                     'description' => 'required|max:100',
                     'prix' => 'required|numeric',
                     'quantite'=> 'required|numeric',
-                    'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                    'photo' => 'required|string',
                     'categorie_id' => 'required|exists:categories,id'
                     ]
             );
 
             // Gestion de l'upload de l'image
-            $imageName = time().'.'.$request->photo->extension();
-            $request->photo->move(public_path('images'), $imageName);
+            //$imageName = time().'.'.$request->photo->extension();
+            // $request->photo->move(public_path('images'), $imageName);
 
             // Création du produit et association avec la boutique du vendeur
             $produit = Produit::create([
@@ -115,7 +115,7 @@ class ProduitController extends Controller
                 'description' => $request->description,
                 'prix' => $request->prix,
                 'quantite' => $request->quantite,
-                'photo' => $imageName,
+                'photo' => $request->photo,
                 'categorie_id' => $request->categorie_id,
                 'boutique_id' => $boutique->id,
                 'user_id' => $user->id,
