@@ -38,7 +38,7 @@ const OneProduct = ({ produits, categories }) => {
     if (!produit) {
         return <p>Chargement...</p>;
     }
-    const imageUrl = new URL(`../assets/images/produits/${produit.photo}`, import.meta.url).href;
+    const imageUrl = new URL(`../../../backend/storage/app/public/images/produits/${produit.photo}`, import.meta.url).href;
 
 
     const handleDecrement = () => {

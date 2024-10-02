@@ -33,7 +33,7 @@ const Profile = ({ utilisateur }) => {
         return <div>Loading...</div>; // Affiche le chargement tant que les données ne sont pas prêtes
     }
 
-    const imageUrl = new URL(`../assets/images/profil/${utilisateur.photo}`, import.meta.url).href;
+    const imageUrl = new URL(`../../../backend/storage/app/public/images/profil/${utilisateur.photo}`, import.meta.url).href;
 
 
 

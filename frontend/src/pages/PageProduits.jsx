@@ -9,7 +9,7 @@ const PageProduits = () => {
     const [selectedProduct, setSelectedProduct] = useState({ id: null, nom: '', prix: '', description: '', quantite: '' });
     const [photo, setPhoto] = useState('');
     const modalRef = useRef(null);
-    const imageUrl = new URL(`../assets/images/profil/jules.jpg`, import.meta.url).href;
+    const imageUrl = new URL(`../../../backend/storage/app/public/images/profil/jules.jpg`, import.meta.url).href;
     const [libelle, setLibelle] = useState('');
     const [message, setMessage] = useState('');
     const [description, setDescription] = useState('');
@@ -55,14 +55,13 @@ const PageProduits = () => {
             return;
         }
 
-        const produit = {
-            libelle,
-            description,
-            prix,
-            quantite,
-            categorie_id,
-            photo
-        }
+        const formData = new FormData();
+        formData.append('libelle', libelle);  // autres champs que tu veux envoyer
+        formData.append('description', description);
+        formData.append('prix', prix);
+        formData.append('quantite', quantite);
+        formData.append('categorie_id', categorie_id);
+        formData.append('photo', photo);  // ajout de la photo
 
 
         const token = localStorage.getItem('token');
@@ -70,9 +69,10 @@ const PageProduits = () => {
 
             const response = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/produits`,
-                produit,  // Passer l'objet produit dans le corps de la requête
+                formData,  // Passer l'objet produit dans le corps de la requête
                 {
                     headers: {
+                        'Content-Type': 'multipart/form-data',
                         Authorization: `Bearer ${token}`, // Inclure le token dans les en-têtes
                     },
                 }
@@ -139,7 +139,7 @@ const PageProduits = () => {
         const file = event.target.files[0];
         if (file) {
             setPhotoUrl(URL.createObjectURL(file));
-            setPhoto(file.name)
+            setPhoto(file);  // Stocke l'objet File complet ici
         }
     };
 

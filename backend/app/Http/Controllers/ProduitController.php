@@ -100,7 +100,7 @@ class ProduitController extends Controller
                     'description' => 'required|max:100',
                     'prix' => 'required|numeric',
                     'quantite'=> 'required|numeric',
-                    'photo' => 'required|string',
+                    'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
                     'categorie_id' => 'required|exists:categories,id'
                     ]
             );
@@ -108,18 +108,23 @@ class ProduitController extends Controller
             // Gestion de l'upload de l'image
             //$imageName = time().'.'.$request->photo->extension();
             // $request->photo->move(public_path('images'), $imageName);
-
-            // Création du produit et association avec la boutique du vendeur
-            $produit = Produit::create([
-                'libelle' => $request->libelle,
-                'description' => $request->description,
-                'prix' => $request->prix,
-                'quantite' => $request->quantite,
-                'photo' => $request->photo,
-                'categorie_id' => $request->categorie_id,
-                'boutique_id' => $boutique->id,
-                'user_id' => $user->id,
-            ]);
+            if ($request->hasFile('photo')) {
+                $path = $request->file('photo')->store('public/images');
+                $imageName = basename($path);  // Récupère le nom de l'image
+        
+                // Création du produit et association avec la boutique du vendeur
+                $produit = Produit::create([
+                    'libelle' => $request->libelle,
+                    'description' => $request->description,
+                    'prix' => $request->prix,
+                    'quantite' => $request->quantite,
+                    'photo' => $imageName,
+                    'categorie_id' => $request->categorie_id,
+                    'boutique_id' => $boutique->id,
+                    'user_id' => $user->id,
+                ]);
+            }
+            
 
             return response()->json([
                 'status' => true,
@@ -197,8 +202,8 @@ class ProduitController extends Controller
             // Gérer l'upload de la nouvelle image si elle est présente dans la requête
             if ($request->hasFile('photo')) {
                 // Supprimer l'ancienne image si elle existe
-                if ($product->photo && file_exists(public_path('images/' . $product->photo))) {
-                    unlink(public_path('images/' . $product->photo));
+                if ($product->photo && file_exists(public_path('images/produits' . $product->photo))) {
+                    unlink(public_path('images/produits' . $product->photo));
                 }
 
                 // Enregistrer la nouvelle image

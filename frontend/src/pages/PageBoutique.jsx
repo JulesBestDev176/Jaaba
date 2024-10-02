@@ -11,7 +11,7 @@ const PageBoutique = () => {
         }
 
     };
-    const imageUrl = new URL(`../assets/images/profil/jules.jpg`, import.meta.url).href;
+    const imageUrl = new URL(`../../../backend/storage/app/public/images/profil/jules.jpg`, import.meta.url).href;
 
     return (
         <div>

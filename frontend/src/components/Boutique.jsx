@@ -1,7 +1,7 @@
 import React from 'react'
 
 const Boutique = ({ boutique }) => {
-    const imageUrl = new URL(`../assets/images/profil/${boutique.photo}`, import.meta.url).href;
+    const imageUrl = new URL(`../../../backend/storage/app/public/images/produits/${boutique.photo}`, import.meta.url).href;
 
     return (
         <div className='card col-2 p-3 m-3'>

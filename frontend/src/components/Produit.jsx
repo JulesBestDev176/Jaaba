@@ -9,7 +9,9 @@ const Produit = ({ produit }) => {
         fontWeight: 'bold',
     }
 
-    const imageUrl = new URL(`../assets/images/produits/${produit.photo}`, import.meta.url).href;
+    // const img = new URL('../../../backend/storage/app/public/images/')
+
+    const imageUrl = new URL(`../../../backend/storage/app/public/images/produits/${produit.photo}`, import.meta.url).href;
 
 
 
@@ -19,7 +21,9 @@ const Produit = ({ produit }) => {
                 <div className="col">
                     <div className='row'>
                         <img src={imageUrl}
-                            alt={produit.libelle} />
+                            alt={produit.libelle}
+                            style={{ height: '200px' }}
+                        />
                     </div>
                     <div className="row">
                         <p>{produit.libelle}</p>
