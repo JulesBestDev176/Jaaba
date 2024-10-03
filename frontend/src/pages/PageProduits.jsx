@@ -170,6 +170,31 @@ const PageProduits = () => {
         }
     };
 
+    const deleteProductRequest = async () => {
+
+        const token = localStorage.getItem('token');
+        try {
+
+            const response = await axios.delete(
+                `${import.meta.env.VITE_BACKEND_URL}/produits/${idProduit}`,
+                // Passer l'objet produit dans le corps de la requête
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Inclure le token dans les en-têtes
+                    },
+                }
+            );
+
+            fetchProduits();
+            setMessage(response.data.message); // Message de succès ou d'erreur
+
+        } catch (error) {
+            console.error("Erreur lors de la suppression du produit :", error);
+            // Optionnel : afficher un message d'erreur
+            setMessage("Une erreur est survenue lors de la suppression du produit.");
+        }
+    };
+
 
     // Ouvrir le modal avec une action (ajouter/modifier/supprimer)
     const handleOpenModal = (action, id) => {
@@ -178,6 +203,9 @@ const PageProduits = () => {
 
         if (action === 'modifier' && id) {
             fetchProductById(id); // Récupérer le produit par ID
+        } else if (action === 'supprimer' && id) {
+            fetchProductById(id); // Récupérer le produit par ID
+
         } else {
             // Réinitialiser les champs du formulaire si on ouvre le modal pour ajouter un produit
             setLibelle('');
@@ -287,7 +315,7 @@ const PageProduits = () => {
                                 <button className="btn btn-warning btn-sm me-2" onClick={() => handleOpenModal('modifier', produit.id)}>
                                     Modifier
                                 </button>
-                                <button className="btn btn-danger btn-sm" onClick={() => handleOpenModal('supprimer', produit)}>
+                                <button className="btn btn-danger btn-sm" onClick={() => handleOpenModal('supprimer', produit.id)}>
                                     Supprimer
                                 </button>
                             </td>
@@ -310,8 +338,8 @@ const PageProduits = () => {
                                 <button type="button" className="btn-close" onClick={handleCloseModal}></button>
                             </div>
                             <div className="modal-body">
-                                {currentAction === 'supprimer' && selectedProduct && (
-                                    <p>Voulez-vous vraiment supprimer le produit : {selectedProduct.nom} ?</p>
+                                {currentAction === 'supprimer' && (
+                                    <p>Voulez-vous vraiment supprimer le produit : {produit.libelle} ?</p>
                                 )}
                                 {(currentAction === 'ajouter' || currentAction === 'modifier') && (
                                     <form >
@@ -390,7 +418,7 @@ const PageProduits = () => {
                                                 onChange={(e) => setCategorie(e.target.value)}
                                                 required
                                             >
-                                                <option value="" disabled>Type de compte</option>
+                                                <option value="" disabled>Categorie</option>
                                                 {categories.map((categorie) => (
                                                     <option key={categorie.id} value={categorie.id}>{categorie.nomCategorie}</option>
                                                 ))}
@@ -402,7 +430,7 @@ const PageProduits = () => {
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>Annuler</button>
                                 {currentAction === 'supprimer' && (
-                                    <button type="button" className="btn btn-danger" onClick={handleDeleteProduct}>Supprimer</button>
+                                    <button type="button" className="btn btn-danger" id="supprimer" onClick={deleteProductRequest}>Supprimer</button>
                                 )}
                                 {currentAction === 'ajouter' && (
                                     <button type="button" className="btn btn-primary" onClick={ajouterProduitRequest}>Ajouter</button>
