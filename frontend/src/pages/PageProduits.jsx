@@ -7,16 +7,20 @@ const PageProduits = () => {
     const [showModal, setShowModal] = useState(false);
     const [currentAction, setCurrentAction] = useState('');
     const [selectedProduct, setSelectedProduct] = useState({ id: null, nom: '', prix: '', description: '', quantite: '' });
-    const [photo, setPhoto] = useState('');
+    const [photo, setPhoto] = useState(null);
     const modalRef = useRef(null);
-    const imageUrl = new URL(`../../../backend/storage/app/public/images/profil/jules.jpg`, import.meta.url).href;
+    const imageUrl = new URL(`../../../backend/storage/app/public/images/profil/${photo}`, import.meta.url).href;
     const [libelle, setLibelle] = useState('');
     const [message, setMessage] = useState('');
     const [description, setDescription] = useState('');
     const [prix, setPrix] = useState('');
     const [quantite, setQuantite] = useState('');
     const [categorie_id, setCategorie] = useState('')
-    const [photoUrl, setPhotoUrl] = useState(null)
+    const defaultImage = new URL("../assets/images/auto.jpg", import.meta.url).href;
+    const [photoUrl, setPhotoUrl] = useState(defaultImage)
+    const [produit, setProduit] = useState({})
+    const [idProduit, setId] = useState(0)
+
     const categories = [
         {
             "id": 1,
@@ -47,6 +51,28 @@ const PageProduits = () => {
         }
     };
 
+    const fetchProductById = async (id) => {
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/produits/${id}`);
+            const produit = res.data.produit; // Assurez-vous que c'est le bon chemin d'accès
+            setProduit(produit); // Vous pouvez conserver cette ligne si besoin
+            // Mettez à jour les champs du formulaire
+            setLibelle(produit.libelle);
+            setPrix(produit.prix);
+            setQuantite(produit.quantite);
+            setDescription(produit.description);
+            setCategorie(produit.categorie_id); // Si vous avez un champ catégorie
+            setPhoto(produit.photo); // Mettez à jour l'URL de l'image
+            setId(produit.id)
+            // console.log(produit.photo)
+            let imageUrl = new URL(`../../../backend/storage/app/public/images/produits/${produit.photo}`, import.meta.url).href
+            setPhotoUrl(imageUrl);
+        } catch (error) {
+            console.error("Erreur lors de la récupération du produit :", error);
+            return null;
+        }
+    };
+
     // Requête pour ajouter un produit
     const ajouterProduitRequest = async () => {
 
@@ -58,13 +84,15 @@ const PageProduits = () => {
         const formData = new FormData();
         formData.append('libelle', libelle);  // autres champs que tu veux envoyer
         formData.append('description', description);
-        formData.append('prix', prix);
-        formData.append('quantite', quantite);
-        formData.append('categorie_id', categorie_id);
+        formData.append('prix', Number(prix));
+        formData.append('quantite', Number(quantite));
+        formData.append('categorie_id', Number(categorie_id));
         formData.append('photo', photo);  // ajout de la photo
 
 
         const token = localStorage.getItem('token');
+        console.log('photo:', photo);
+        console.log(photo.name)
         try {
 
             const response = await axios.post(
@@ -94,12 +122,72 @@ const PageProduits = () => {
         }
     };
 
+    //Requête pour modifier produit
+    const updateProduitRequest = async () => {
+
+        if (prix <= 0 || quantite <= 0) {
+            setMessage("Le prix et la quantité doivent être supérieurs à 0.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('libelle', libelle);  // autres champs que tu veux envoyer
+        formData.append('description', description);
+        formData.append('prix', Number(prix));
+        formData.append('quantite', Number(quantite));
+        formData.append('categorie_id', Number(categorie_id));
+        formData.append('photo', photo);  // ajout de la photo
+
+
+        const token = localStorage.getItem('token');
+        console.log('photo:', photo);
+        try {
+
+            const response = await axios.put(
+                `${import.meta.env.VITE_BACKEND_URL}/produits/${idProduit}`,
+                formData,  // Passer l'objet produit dans le corps de la requête
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${token}`, // Inclure le token dans les en-têtes
+                    },
+                }
+            );
+
+            fetchProduits();
+            setMessage(response.data.message); // Message de succès ou d'erreur
+            // Réinitialiser le formulaire (ajusté aux champs du produit)
+            setLibelle('');
+            setDescription('');
+            setPrix('');
+            setQuantite('');
+            setPhoto('');
+            setCategorie();
+        } catch (error) {
+            console.error("Erreur lors de l'ajout du produit :", error);
+            // Optionnel : afficher un message d'erreur
+            setMessage("Une erreur est survenue lors de l'ajout du produit.");
+        }
+    };
+
 
     // Ouvrir le modal avec une action (ajouter/modifier/supprimer)
-    const handleOpenModal = (action, produit = { id: null, nom: '', prix: '', description: '', quantite: '' }) => {
+    const handleOpenModal = (action, id) => {
         setCurrentAction(action);
-        setSelectedProduct(produit);
         setShowModal(true);
+
+        if (action === 'modifier' && id) {
+            fetchProductById(id); // Récupérer le produit par ID
+        } else {
+            // Réinitialiser les champs du formulaire si on ouvre le modal pour ajouter un produit
+            setLibelle('');
+            setPrix('');
+            setQuantite('');
+            setDescription('');
+            setCategorie('');
+            setPhoto('');
+            setPhotoUrl(defaultImage)
+        }
     };
 
     // Fermer le modal
@@ -138,8 +226,14 @@ const PageProduits = () => {
     const handlePhotoChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            setPhotoUrl(URL.createObjectURL(file));
-            setPhoto(file);  // Stocke l'objet File complet ici
+            // Vérification du type d'image
+            const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+            if (validImageTypes.includes(file.type)) {
+                setPhotoUrl(URL.createObjectURL(file)); // Affiche l'aperçu
+                setPhoto(file);  // Stocke l'objet File
+            } else {
+                setMessage("Le fichier sélectionné n'est pas une image valide.");
+            }
         }
     };
 
@@ -190,7 +284,7 @@ const PageProduits = () => {
                             <td>{produit.description}</td>
                             <td>{produit.quantite}</td>
                             <td>
-                                <button className="btn btn-warning btn-sm me-2" onClick={() => handleOpenModal('modifier', produit)}>
+                                <button className="btn btn-warning btn-sm me-2" onClick={() => handleOpenModal('modifier', produit.id)}>
                                     Modifier
                                 </button>
                                 <button className="btn btn-danger btn-sm" onClick={() => handleOpenModal('supprimer', produit)}>
@@ -225,7 +319,7 @@ const PageProduits = () => {
                                         <div className="d-flex justify-content-center">
                                             <div className="position-relative">
                                                 <img
-                                                    src={photo ? photoUrl : imageUrl}
+                                                    src={!photo ? defaultImage : photoUrl}
                                                     alt="Product"
                                                     className="rounded-circle border border-success"
                                                     style={{ width: "150px", height: "150px", objectFit: "cover" }}
@@ -314,7 +408,7 @@ const PageProduits = () => {
                                     <button type="button" className="btn btn-primary" onClick={ajouterProduitRequest}>Ajouter</button>
                                 )}
                                 {currentAction === 'modifier' && (
-                                    <button type="button" className="btn btn-warning" onClick={handleUpdateProduct}>Modifier</button>
+                                    <button type="button" className="btn btn-warning" onClick={updateProduitRequest}>Modifier</button>
                                 )}
                             </div>
                         </div>
