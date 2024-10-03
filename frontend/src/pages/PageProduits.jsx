@@ -130,25 +130,32 @@ const PageProduits = () => {
             return;
         }
 
-        const formData = new FormData();
-        formData.append('libelle', libelle);  // autres champs que tu veux envoyer
-        formData.append('description', description);
-        formData.append('prix', Number(prix));
-        formData.append('quantite', Number(quantite));
-        formData.append('categorie_id', Number(categorie_id));
-        formData.append('photo', photo);  // ajout de la photo
+        const produit = {
+            libelle,
+            description,
+            prix,
+            quantite,
+            categorie_id
+        }
 
+        // const formData = new FormData();
+        // formData.append('libelle', libelle);  // autres champs que tu veux envoyer
+        // formData.append('description', description);
+        // formData.append('prix', Number(prix));
+        // formData.append('quantite', Number(quantite));
+        // formData.append('categorie_id', Number(categorie_id));
+
+        // const formDataArray = Array.from(formData.entries());
+        // console.log(formDataArray);
 
         const token = localStorage.getItem('token');
-        console.log('photo:', photo);
         try {
 
             const response = await axios.put(
                 `${import.meta.env.VITE_BACKEND_URL}/produits/${idProduit}`,
-                formData,  // Passer l'objet produit dans le corps de la requête
+                produit,  // Passer l'objet produit dans le corps de la requête
                 {
                     headers: {
-                        'Content-Type': 'multipart/form-data',
                         Authorization: `Bearer ${token}`, // Inclure le token dans les en-têtes
                     },
                 }
@@ -156,17 +163,11 @@ const PageProduits = () => {
 
             fetchProduits();
             setMessage(response.data.message); // Message de succès ou d'erreur
-            // Réinitialiser le formulaire (ajusté aux champs du produit)
-            setLibelle('');
-            setDescription('');
-            setPrix('');
-            setQuantite('');
-            setPhoto('');
-            setCategorie();
+
         } catch (error) {
-            console.error("Erreur lors de l'ajout du produit :", error);
+            console.error("Erreur lors de la modification du produit :", error);
             // Optionnel : afficher un message d'erreur
-            setMessage("Une erreur est survenue lors de l'ajout du produit.");
+            setMessage("Une erreur est survenue lors de la modification du produit.");
         }
     };
 
@@ -352,12 +353,16 @@ const PageProduits = () => {
                                                     className="rounded-circle border border-success"
                                                     style={{ width: "150px", height: "150px", objectFit: "cover" }}
                                                 />
-                                                <div className="position-absolute" style={{ bottom: "5px", right: "5px" }}>
-                                                    <input type="file" id="image" className="d-none" name='photo' onChange={handlePhotoChange} />
-                                                    <label htmlFor="image" className="bg-light rounded-circle d-flex justify-content-center align-items-center" style={{ width: "30px", height: "30px", cursor: "pointer" }}>
-                                                        <CiCamera />
-                                                    </label>
-                                                </div>
+                                                {currentAction === "modifier" ?
+                                                    null :
+                                                    <div className="position-absolute" style={{ bottom: "5px", right: "5px" }}>
+                                                        <input type="file" id="image" className="d-none" name='photo' onChange={handlePhotoChange} />
+                                                        <label htmlFor="image" className="bg-light rounded-circle d-flex justify-content-center align-items-center" style={{ width: "30px", height: "30px", cursor: "pointer" }}>
+                                                            <CiCamera />
+                                                        </label>
+                                                    </div>
+                                                }
+
                                             </div>
                                         </div>
 

@@ -197,23 +197,14 @@ class ProduitController extends Controller
                     'description' => 'required|max:100',
                     'prix' => 'required|numeric',
                     'quantite'=> 'required|numeric',
-                    'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:25972',
                     ]
             );
 
             // Gérer l'upload de la nouvelle image si elle est présente dans la requête
             
-            if ($request->hasFile('photo')) {
-                if ($product->photo && file_exists(public_path('images/produits' . $product->photo))) {
-                    unlink(public_path('images/produits' . $product->photo));
-                }
-                $path = $request->file('photo')->store('public/images/produits');
-                $imageName = basename($path);  // Récupère le nom de l'image
-        
-                // Création du produit et association avec la boutique du vendeur
+            
 
-//            
-            }
+//          
             // Mise a jour des autres champs
                 $product->update([
                     'libelle' => $request->libelle,
