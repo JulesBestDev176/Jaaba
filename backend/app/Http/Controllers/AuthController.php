@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\LoginRequest;
 
+use App\Models\Boutique;
+
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -44,6 +46,18 @@ class AuthController extends Controller
             $user->statut = true;
 
             $user->save();
+
+            //Si le role est 'vendeur', on lui cree automatiquement une boutique
+            if ($request->role === 'vendeur'){
+                Boutique::create([
+                    'user_id' => $user->id,
+                ]);
+                return response()->json([
+                    'message' => 'Inscription reussie. Veuillez completez les informations de votre boutique.',
+                    'user_id' => $user->id, //L'ID utilisateur pour permettre la modification de la boutique plus tard.
+                ], 201);
+            }
+
 
             return response()->json([
                 'message' => 'User registered successfully!',

@@ -141,6 +141,7 @@ class ProduitController extends Controller
         }
     }
 
+
     /**
      * Display the specified resource.
      */
@@ -240,12 +241,19 @@ class ProduitController extends Controller
 //            Recuperer l'utilisateur connecte
             $user = Auth::user();
             // Vérifier si l'utilisateur a le rôle "vendeur"
-            // if (!$user->hasRole('vendeur')) {
-            //     return response()->json([
-            //         'status' => false,
-            //         'message' => "Seuls les vendeurs peuvent créer une boutique."
-            //     ], 403);
-            // }
+//            if (!$user->hasRole('vendeur')) {
+//                return response()->json([
+//                    'status' => false,
+//                    'message' => "Seuls les vendeurs peuvent créer une boutique."
+//                ], 403);
+//            }
+
+            if ($user->role !== 'vendeur') {
+                return response()->json([
+                    'status' => false,
+                    'message' => "Seuls les vendeurs peuvent créer une boutique."
+                ], 403);
+            }
 //            $product = $user->produits()->findOrFail($id);  // Vérifier si le produit appartient bien au vendeur
 
 //            Recuperer la boutique du vendeur

@@ -6,8 +6,8 @@ const OneProduct = ({ produits, categories }) => {
 
     const { id } = useParams();
     const [produit, setProduit] = useState(null);
-    const [categorie, setCategorie] = useState(null);
     const [quantite, setQuantite] = useState(1);
+    const [categorie, setCategorie] = useState(null);
 
     const produitRequest = async () => {
         try {
@@ -19,11 +19,18 @@ const OneProduct = ({ produits, categories }) => {
     };
 
 
-    useEffect(() => {
 
+    useEffect(() => {
         // Simuler une requête vers un backend pour récupérer le produit
-        produitRequest()
-    }, [id, produits, categories]);
+        produitRequest();
+    }, [id]); // Dépendance uniquement sur l'id
+
+    useEffect(() => {
+        if (produit && categories) {
+            const foundCategorie = categories.find(cat => cat.id === produit.categorie_id);
+            setCategorie(foundCategorie);
+        }
+    }, [produit, categories]);
 
 
 
@@ -54,7 +61,7 @@ const OneProduct = ({ produits, categories }) => {
     return (
         <>
             <div className="">
-                <p className='txt-gray'>Accueil / Produits / {produit.libelle} </p>
+                <p className='txt-gray'>Accueil / Produits / {categorie ? categorie.nomCategorie : "Catégorie inconnue"}  /{produit.libelle} </p>
             </div>
             <div className="bg-white border-bottom p-3">
                 <div className="row mb-3">

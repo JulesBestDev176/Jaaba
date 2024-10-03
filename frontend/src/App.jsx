@@ -39,6 +39,7 @@ function App() {
     const userId = localStorage.getItem('userId'); // Récupérer l'ID de l'utilisateur
 
     produitsRequest();
+    fetchCategories();
 
     if (token && userId) {
       axios
@@ -54,6 +55,7 @@ function App() {
           console.error('Erreur lors de la récupération de l\'utilisateur:', error);
           setUser(null); // Si une erreur se produit, définir l'utilisateur sur null
         });
+      fetchCommande();
     } else {
       setUser(null); // Si pas de token ou d'ID, définir l'utilisateur sur null
     }
@@ -71,7 +73,30 @@ function App() {
   };
 
 
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/categories`);
+      setCategories(res.data.categories);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des produits :", error);
+    }
+  };
 
+
+  const fetchCommande = async () => {
+    const token = localStorage.getItem('token');
+
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/client/orders`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Inclure le token dans les en-têtes
+        },
+      })
+      setCommandes(res.data.commandes)
+    } catch (error) {
+
+    }
+  }
 
 
   return (

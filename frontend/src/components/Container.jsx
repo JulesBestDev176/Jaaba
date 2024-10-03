@@ -8,6 +8,7 @@ const Container = ({ categories, utilisateurs, paniers, produits }) => {
 
     const [roles, setRoles] = useState([])
 
+
     const rolesRequest = async () => {
         try {
             const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/roles`); // Correction ici
@@ -16,6 +17,7 @@ const Container = ({ categories, utilisateurs, paniers, produits }) => {
             console.error("Erreur lors de la récupération des rôles :", error);
         }
     };
+
 
     useEffect(() => {
         rolesRequest();

@@ -9,16 +9,16 @@ const Produits = ({ produits, categories }) => {
     if (categories) {
         categorie = categories.find(cat => cat.id === categorieIdNumber);
     }
-    // const produitsFiltres = produits.filter(produit => produit.categorie_id === categorieIdNumber);
+    const produitsFiltres = produits.filter(produit => produit.categorie_id === categorieIdNumber);
 
     return (
         <>
             <div className="row p-3">
-                <p className='txt-gray'>Accueil / Produits / {categorie ? `${categorie.nom}` : ''}</p>
+                <p className='txt-gray'>Accueil / Produits / {categorie ? `${categorie.nomCategorie}` : ''}</p>
             </div>
             <div className="container-fluid bg-white mb-0 border-bottom">
                 <div className="row p-3">
-                    <h4>{categorie === undefined ? 'Produits' : `${categorie.nom}`}</h4>
+                    <h4>{categorie === undefined ? 'Produits' : `${categorie.nomCategorie}`}</h4>
                 </div>
                 <div className="row d-flex">
                     {/* <div className="col-3 mb-3 border-end">

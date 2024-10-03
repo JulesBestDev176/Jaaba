@@ -20,27 +20,17 @@ const PageProduits = () => {
     const [photoUrl, setPhotoUrl] = useState(defaultImage)
     const [produit, setProduit] = useState({})
     const [idProduit, setId] = useState(0)
-
-    const categories = [
-        {
-            "id": 1,
-            "nomCategorie": "Electronique"
-        },
-        {
-            "id": 2,
-            "nomCategorie": "Mode"
-        },
-        {
-            "id": 3,
-            "nomCategorie": "Alimentaire"
-        },
-        {
-            "id": 4,
-            "nomCategorie": "Cosmétique"
-        },
-    ]
+    const [categories, setCategories] = useState([])
 
 
+    const fetchCategories = async () => {
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/categories`);
+            setCategories(res.data.categories);
+        } catch (error) {
+            console.error("Erreur lors de la récupération des produits :", error);
+        }
+    };
     // Requête pour récupérer les produits depuis le backend
     const fetchProduits = async () => {
         try {
@@ -113,7 +103,6 @@ const PageProduits = () => {
             setDescription('');
             setPrix('');
             setQuantite('');
-            setPhoto('');
             setCategorie();
         } catch (error) {
             console.error("Erreur lors de l'ajout du produit :", error);
@@ -204,6 +193,7 @@ const PageProduits = () => {
 
         if (action === 'modifier' && id) {
             fetchProductById(id); // Récupérer le produit par ID
+            console.log("photoUrl", photoUrl);
         } else if (action === 'supprimer' && id) {
             fetchProductById(id); // Récupérer le produit par ID
 
@@ -275,6 +265,7 @@ const PageProduits = () => {
 
     useEffect(() => {
         fetchProduits();
+        fetchCategories();
         if (showModal) {
             document.addEventListener('mousedown', handleClickOutside);
         } else {

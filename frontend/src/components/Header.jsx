@@ -25,7 +25,7 @@ const Header = ({ categories, roles, paniers, produits }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
-    const [categorie, setCategorie] = useState([])
+
 
     const navigate = useNavigate();
 
@@ -49,11 +49,23 @@ const Header = ({ categories, roles, paniers, produits }) => {
             setRole('');
             setEmail('');
             setPassword('');
+
         } catch (error) {
             setMessage('Une erreur est survenue lors de l\'inscription.');
         }
     };
 
+    const createBoutique = async (token) => {
+        try {
+            const resp = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/boutique`, {
+                headers: {
+                    Authorization: `Bearer ${token}`, // Inclure le token dans les en-têtes
+                },
+            });
+        } catch (error) {
+            setMessage('Une erreur est survenue lors de la creation de boutique.');
+        }
+    }
     const handleConnexion = async (e) => {
         e.preventDefault();
         const utilisateur = {
@@ -77,6 +89,7 @@ const Header = ({ categories, roles, paniers, produits }) => {
                     navigate(`/compte/profile`);
                 } else if (user.role === "vendeur") {
                     navigate(`/userDashboard/profile`);
+                    // createBoutique(token)
                 } else {
                     alert(`Rôle inconnu: ${user.role}`);
                 }
@@ -127,15 +140,7 @@ const Header = ({ categories, roles, paniers, produits }) => {
         }
     }
 
-    const categoriesRequest = async () => {
-        try {
-            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/`); // Correction ici
-            setProduit(res.data.produit);
-            console.log(res.data.produit)
-        } catch (error) {
-            console.error("Erreur lors de la récupération des produits :", error);
-        }
-    }
+
 
 
 
@@ -249,7 +254,7 @@ const Header = ({ categories, roles, paniers, produits }) => {
                                     </div>
                                     <div className="col-10 text-start ps-2">
                                         <div className="col txt-gray">
-                                            Mon Compte
+                                            <Link to={user ? "compte/profile" : "/"}>Mon Compte</Link>
                                         </div>
                                         <div className="col">
                                             {user ?
@@ -297,7 +302,7 @@ const Header = ({ categories, roles, paniers, produits }) => {
                                         return (
                                             <li className='border-top' key={categorie.id}>
                                                 <Link to={"/produits/" + `${categorie.id}`} className="dropdown-item">
-                                                    {categorie.nom}
+                                                    {categorie.nomCategorie}
                                                 </Link>
                                             </li>
                                         )

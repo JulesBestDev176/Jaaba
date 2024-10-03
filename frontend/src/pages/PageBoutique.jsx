@@ -1,8 +1,64 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { CiCamera } from "react-icons/ci";
+import axios from 'axios';
 
 const PageBoutique = () => {
 
+    const [boutique, setBoutique] = useState({})
+    const [adresse, setAdresse] = useState('')
+    const [nomBoutique, setNom] = useState('')
+    const [description, setDescription] = useState('')
+    const [telephone, setTelephone] = useState('')
+    const [message, setMessage] = useState('');
+
+
+    const fetchBoutique = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const resp = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/boutique/vendeur`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Inclure le token dans les en-têtes
+                    },
+                }
+            )
+            const data = resp.data.boutique;
+            setBoutique(data);
+            setNom(data.nomBoutique);
+            setDescription(data.description);
+            setAdresse(data.adresse);
+            setTelephone(data.telephone)
+        } catch (error) {
+            console.error("Erreur lors de la récupération de la boutique :", error);
+        }
+    }
+
+    const updateBoutique = async (e) => {
+        e.preventDefault()
+        const boutiqueUp = {
+            nomBoutique,
+            description,
+            adresse,
+            telephone
+        }
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId')
+        try {
+            const response = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/boutique/${userId}`,
+                boutiqueUp,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Inclure le token dans les en-têtes
+                    },
+                }
+            )
+            setMessage(response.data.message);
+        } catch (error) {
+            console.error("Erreur lors de la modification de la boutique :", error);
+            // Optionnel : afficher un message d'erreur
+            setMessage("Une erreur est survenue lors de la modification de la boutique.");
+        }
+    }
 
     const handlePhotoChange = (event) => {
         const file = event.target.files[0];
@@ -11,6 +67,11 @@ const PageBoutique = () => {
         }
 
     };
+
+    useEffect(() => {
+        fetchBoutique();
+    }, [])
+
     const imageUrl = new URL(`../../../backend/storage/app/public/images/profil/jules.jpg`, import.meta.url).href;
 
     return (
@@ -39,10 +100,12 @@ const PageBoutique = () => {
                 <div className="w-100 px-3">
                     <form>
                         <div className="col-md-12 mb-3">
-                            <label htmlFor="nom" className="form-label">Nom</label>
+                            <label htmlFor="nomBoutique" className="form-label">Nom</label>
                             <input
                                 type="text"
-                                id="nom"
+                                id="nomBoutique"
+                                name="nomBoutique"
+                                value={nomBoutique}
                                 className="form-control"
                                 required
                                 onChange={(e) => setNom(e.target.value)}
@@ -54,9 +117,10 @@ const PageBoutique = () => {
                                 <textarea
                                     name="description"
                                     id="description"
+                                    value={description}
                                     cols="30" rows="5"
                                     className='form-control'
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={(e) => setDescription(e.target.value)}
                                 >
 
                                 </textarea>
@@ -66,51 +130,37 @@ const PageBoutique = () => {
 
 
                         <div className="row mb-3">
-                            <div className="col-md-6">
-                                <label htmlFor="pays" className="form-label">Pays</label>
+                            <div className="col-md-12">
+                                <label htmlFor="adresse" className="form-label">Adresse</label>
                                 <input
                                     type="text"
-                                    id="pays"
+                                    id="adresse"
                                     className="form-control"
                                     required
-                                    onChange={(e) => setPays(e.target.value)}
+                                    value={adresse}
+                                    name="adresse"
+                                    onChange={(e) => setAdresse(e.target.value)}
                                 />
                             </div>
-                            <div className="col-md-6">
-                                <label htmlFor="region" className="form-label">Region</label>
-                                <input
-                                    type="text"
-                                    id="region"
-                                    className="form-control"
-                                    required
-                                    onChange={(e) => setRegion(e.target.value)}
-                                />
-                            </div>
+
                         </div>
                         <div className="row mb-3">
-                            <div className="col-md-6">
-                                <label htmlFor="ville" className="form-label">Ville</label>
+                            <div className="col-md-12">
+                                <label htmlFor="telephone" className="form-label">Telephone</label>
                                 <input
                                     type="text"
-                                    id="ville"
+                                    id="telephone"
                                     className="form-control"
                                     required
-                                    onChange={(e) => setVille(e.target.value)}
+                                    value={telephone}
+                                    name="adresse"
+                                    onChange={(e) => setTelephone(e.target.value)}
                                 />
                             </div>
-                            <div className="col-md-6">
-                                <label htmlFor="codePostal" className="form-label">Code postal</label>
-                                <input
-                                    type="number"
-                                    id="codePostal"
-                                    className="form-control"
-                                    required
-                                    onChange={(e) => setCodePostal(e.target.value)}
-                                />
-                            </div>
+
                         </div>
 
-                        <button type="submit" className="btn btn-outline-primary w-100 mt-4">Modifier</button>
+                        <button type="submit" className="btn btn-outline-primary w-100 mt-4" onClick={updateBoutique}>Modifier</button>
                     </form>
                 </div>
             </div>
