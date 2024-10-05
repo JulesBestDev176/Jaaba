@@ -26,7 +26,7 @@ const Commande = ({ commandes, utilisateur }) => {
                                 <tr key={commande.id}>
                                     <th scope="row">{commande.id}</th>
                                     <td>{commande.date}</td>
-                                    <td>{commande.statut}</td>
+                                    <td>{commande.montant} FCFA</td>
                                     <td>{commande.statut}</td>
                                     <td className='text-center'><button className='btn btn-success' onClick={handlePaye(commande.id)}>Payer</button></td>
                                 </tr>

@@ -23,6 +23,27 @@ const PageNotification = () => {
         setSelectedProduct({ id: null, nom: '', prix: '', description: '' });
     };
 
+    const terminerCommande = async (e, id) => {
+        e.preventDefault()
+        const token = localStorage.getItem('token')
+        const statut = {
+            "statut": "termine"
+        }
+        try {
+            const resp = await axios.put(`${import.meta.env.VITE_BACKEND_URL}/orders/${id}/status`, statut,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                }
+            )
+            fetchCommande()
+        } catch (error) {
+            console.error("Erreur lors de la récupération des commandes :", error);
+
+        }
+    }
+
     const getDetailCommande = async (e, id) => {
         e.preventDefault()
         const token = localStorage.getItem("token")
@@ -36,6 +57,7 @@ const PageNotification = () => {
             setDetail(resp.data)
             console.log(resp.data);
         } catch (error) {
+            console.error("Erreur lors de la récupération des commandes :", error);
 
         }
     }
@@ -131,9 +153,13 @@ const PageNotification = () => {
                             <td>
                                 <div className="col-12 d-flex">
                                     <div className="col-6">
-                                        <button className="btn btn-success btn-sm" onClick={() => handleOpenModal('supprimer', produit)}>
-                                            Terminer
-                                        </button>
+                                        {
+                                            co.statut !== "termine" ?
+                                                (<button className="btn btn-success btn-sm" onClick={(e) => terminerCommande(e, co.id)}>
+                                                    Terminer
+                                                </button>) :
+                                                null
+                                        }
                                     </div>
                                     <div className="col-6">
                                         <button className="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#detail" onClick={(e) => getDetailCommande(e, co.id)}>

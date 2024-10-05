@@ -213,16 +213,87 @@ class OrderController extends Controller
         return response()->json($orderData);
     }
 
+    // public function updateStatus(Request $request, string $id)
+    // {
+    //     //Valider les donnees de la requete pour la mise a jour du statut
+    //     $request->validate([
+    //         'statut' => 'required|in:en cours,terminée,annulée,livrée',
+    //     ]);
+
+    //     try {
+    //         //Trouver la commnade specifiee
+    //         $order = Commande::with(['produits'])->find($id);
+
+    //         //Mettre a jour le statut de la commande
+    //         $order->statut = $request->input('statut');
+
+    //         //Si le statut est 'completed', mettre a jour les quantites des produits en stock
+    //         if ($request->input('statut') === 'terminée'){
+    //             foreach($order->produits as $product){
+    //                 //Reduire la quantite commandee du stock
+    //                 $productInStock = Produit::find($product->id);
+    //                 if ($productInStock){
+    //                     $productInStock->quantite -= $product->pivot->quantiteProduit;
+
+    //                     // Verifier si la quantite est negative
+    //                     if ($productInStock->quantite < 0){
+    //                         return response()->json([
+    //                             'success' => false,
+    //                             'message' => 'Stock insuffisant pour le produit ' . $product->libelle
+    //                         ], 400);
+    //                     }
+
+    //                     //Sauvegarder la mise a jour
+    //                     $productInStock->save();
+    //                 }
+    //             }
+    //             Mail::to($order->customer->email)->send(new OrderComplete($order));
+    //         }
+
+    //         //Sauvegarder les modifications de la commande
+    //         $order->save();
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Order updated successfully.', 'order' => $order
+    //         ]);
+    //     }catch (\Exception $e){
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
     public function updateStatus(Request $request, string $id)
     {
         //Valider les donnees de la requete pour la mise a jour du statut
         $request->validate([
-            'statut' => 'required|in:en cours,terminée,annulée,livrée',
+            'statut' => 'required|in:en cours,termine,annule,livre',
         ]);
 
         try {
             //Trouver la commnade specifiee
             $order = Commande::with(['produits'])->find($id);
+
+            if (!$order) {
+                return response()->json(['success' => false, 'message' => 'Commande non trouvée.'], 404);
+            }
+
+            //Verifier le vendeur et la boutique
+            $user = auth()->user();
+            $produitsVendeur = $order->produits->filter(function ($produit) use ($user){
+                return $produit->boutique->user_id == $user->id;
+            });
+
+            if ($user->role !== 'vendeur' || $produitsVendeur->isEmpty()){
+              return response()->json(['success' => false, 'message' => 'Vous n\'etes pas autorises a changer le statut de cette commande.'], 403);
+            }
+
+            //Empecher le changement de statut en arriere
+            if ($order->statut === 'terminée' || $order->statut === 'livrée'){
+                return response()->json(['success' => false, 'message' => 'Impossible de changer le statut une fois la commande terminee ou livree.'], 400);
+            }
+
 
             //Mettre a jour le statut de la commande
             $order->statut = $request->input('statut');
