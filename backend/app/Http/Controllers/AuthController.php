@@ -132,6 +132,7 @@ class AuthController extends Controller
                     'prenom' => $user->prenom,
                     'telephone' => $user->telephone,
                     'email' => $user->email,
+                    'adresse' => $user->adresse,
                 ],
             ]);
         } catch (\Exception $e) {

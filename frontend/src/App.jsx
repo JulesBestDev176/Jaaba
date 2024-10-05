@@ -32,29 +32,35 @@ function App() {
   const [boutiques, setBoutiques] = useState([]);
   const [user, setUser] = useState(null);
 
+  const [panier, setPanier] = useState([]);
+
+
+  const fetchUser = async (userId, token) => {
+    try {
+      setUser(null)
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUser(response.data.results);
+    } catch (error) {
+      console.error("Erreur lors de la récupération de l'utilisateur :", error);
+      setUser(null);
+    }
+  };
 
 
   useEffect(() => {
     const token = localStorage.getItem('token'); // Récupérer le token
     const userId = localStorage.getItem('userId'); // Récupérer l'ID de l'utilisateur
-
+    const produitsDansPanier = JSON.parse(localStorage.getItem("panier")) || [];
+    setPanier(produitsDansPanier);
     produitsRequest();
     fetchCategories();
 
     if (token && userId) {
-      axios
-        .get(`${import.meta.env.VITE_BACKEND_URL}/users/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          setUser(response.data.results); // Récupérer l'utilisateur du backend
-        })
-        .catch((error) => {
-          console.error('Erreur lors de la récupération de l\'utilisateur:', error);
-          setUser(null); // Si une erreur se produit, définir l'utilisateur sur null
-        });
+      fetchUser(userId, token);
       fetchCommande();
     } else {
       setUser(null); // Si pas de token ou d'ID, définir l'utilisateur sur null
@@ -103,7 +109,7 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Container categories={categories} utilisateurs={utilisateurs} roles={roles} paniers={paniers} produits={produits} />}>
+          <Route path="/" element={<Container panier={panier} categories={categories} utilisateurs={utilisateurs} roles={roles} produits={produits} />}>
             <Route index element={<Accueil categories={categories} produits={produits} boutiques={boutiques} />} />
             <Route path="about" element={<About />} />
             <Route path="contact" element={<Contact />} />

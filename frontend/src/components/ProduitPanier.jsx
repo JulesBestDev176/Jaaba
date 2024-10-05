@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 
 const ProduitPanier = ({ produit, updateProduitQuantite }) => {
 
-    const [quantite, setQuantite] = useState(produit.quantite);
-
+    const [quantite, setQuantite] = useState(1);
+    const [imageUrl, setImageUrl] = useState('')
     const handleIncrement = () => {
         // const nouvelleQuantite = quantite;
         // updateProduitQuantite(produit.id, nouvelleQuantite);
@@ -20,7 +20,13 @@ const ProduitPanier = ({ produit, updateProduitQuantite }) => {
         }
     };
 
-    const imageUrl = new URL(`../../../backend/storage/app/public/images/produits/${produit.photo}`, import.meta.url).href;
+    useEffect(() => {
+        if (produit && produit.photo) {
+            const url = new URL(`../../../backend/storage/app/public/images/produits/${produit.photo}`, import.meta.url).href;
+            setImageUrl(url);
+        }
+    }, [produit])
+
 
 
 
@@ -35,7 +41,7 @@ const ProduitPanier = ({ produit, updateProduitQuantite }) => {
                     <p className='txt-gray'>{produit.nom}</p>
                 </div>
                 <div className="col-12 d-flex">
-                    <div className="col-6 d-flex align-items-center">
+                    {/* <div className="col-6 d-flex align-items-center">
                         <button className="btn no-button increment" onClick={handleDecrement}>-</button>
                         <input
                             type="number"
@@ -45,7 +51,7 @@ const ProduitPanier = ({ produit, updateProduitQuantite }) => {
                             style={{ width: '60px' }}
                         />
                         <button className="btn no-button decrement" onClick={handleIncrement}>+</button>
-                    </div>
+                    </div> */}
                     <div className="col-6 txt-blue">{produit.prix} CFA</div>
                 </div>
             </div>

@@ -5,7 +5,6 @@ const Profile = ({ utilisateur }) => {
     const [userLoaded, setUserLoaded] = useState(false);
 
 
-
     const [nom, setNom] = useState('')
     const [prenom, setPrenom] = useState('')
     const [email, setEmail] = useState('')
@@ -13,18 +12,34 @@ const Profile = ({ utilisateur }) => {
     const [adresse, setAdresse] = useState('')
     const [password, setPassword] = useState('')
     const [photo, setPhoto] = useState('')
+    const defaultImage = new URL("../assets/images/auto.jpg", import.meta.url).href;
+    const [photoUrl, setPhotoUrl] = useState(defaultImage)
 
     useEffect(() => {
-        if (utilisateur) {
+        console.log(defaultImage)
+        console.log(photo)
+        console.log(photoUrl)
 
+        if (utilisateur) {
             setNom(utilisateur.nom);
             setPrenom(utilisateur.prenom);
             setEmail(utilisateur.email);
-            setTel(utilisateur.tel);
             setAdresse(utilisateur.adresse);
-            setPassword(utilisateur.nom);
             setPhoto(utilisateur.photo);
+            setTel(utilisateur.telephone)
+            let imageUrl = new URL(`../../../backend/storage/app/public/images/profil/${utilisateur.photo}`, import.meta.url).href
+            setPhotoUrl(imageUrl)
+            // console.log(utilisateur.photo)
             setUserLoaded(true);// L'utilisateur est chargé
+
+        } else {
+            setNom('');
+            setPrenom('');
+            setEmail('');
+            setTel('');
+            setAdresse('');
+            setPassword('');
+            setPhoto(defaultImage);
         }
 
     }, [utilisateur]);
@@ -46,41 +61,6 @@ const Profile = ({ utilisateur }) => {
 
 
 
-    // const handleSubmit = async (event) => {
-    //     event.preventDefault();
-
-    //     const updatedUser = {
-    //         nom,
-    //         prenom,
-    //         email,
-    //         tel,
-    //         pays,
-    //         region,
-    //         ville,
-    //         codePostal,
-    //         password,
-    //         photo: photo.split('/').pop()
-    //     };
-
-    //     const formData = new FormData();
-    //     formData.append('photo', photoFile);
-    //     formData.append('user', JSON.stringify(updatedUser));
-
-    //     try {
-    //         const response = await fetch('/api/updateProfile', {
-    //             method: 'POST',
-    //             body: formData,
-    //         });
-
-    //         if (response.ok) {
-    //             console.log("Informations mises à jour avec succès");
-    //         } else {
-    //             console.error("Erreur lors de la mise à jour des informations");
-    //         }
-    //     } catch (error) {
-    //         console.error("Erreur de réseau :", error);
-    //     }
-    // };
 
 
     return (
@@ -89,7 +69,7 @@ const Profile = ({ utilisateur }) => {
                 <div className="d-flex justify-content-center">
                     <div className="position-relative">
                         <img
-                            src={imageUrl}
+                            src={!photo ? defaultImage : photoUrl}
                             alt={utilisateur.nom}
                             className="rounded-circle border border-success"
                             style={{ width: "150px", height: "150px", objectFit: "cover" }}

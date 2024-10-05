@@ -33,8 +33,14 @@ const PageProduits = () => {
     };
     // Requête pour récupérer les produits depuis le backend
     const fetchProduits = async () => {
+        const token = localStorage.getItem('token');
+
         try {
-            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/produits`);
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/boutique/produits`, {
+                headers: {
+                    Authorization: `Bearer ${token}`, // Inclure le token dans les en-têtes
+                },
+            });
             setProduits(res.data.produits);
         } catch (error) {
             console.error("Erreur lors de la récupération des produits :", error);

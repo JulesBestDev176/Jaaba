@@ -31,6 +31,7 @@ const MenuDashboard = () => {
 
 
 
+
             // Rediriger l'utilisateur vers la page de connexion
             navigate('/'); // Remplacez '/login' par la route appropriée
         } catch (error) {

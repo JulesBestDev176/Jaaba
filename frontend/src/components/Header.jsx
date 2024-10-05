@@ -13,7 +13,7 @@ import { useUser } from '../services/UserContext';
 import axios from 'axios'
 import { accountService } from '../services/account.services';
 
-const Header = ({ categories, roles, paniers, produits }) => {
+const Header = ({ categories, roles, produits, panier }) => {
 
 
     const { user, setUser } = useUser();
@@ -25,6 +25,9 @@ const Header = ({ categories, roles, paniers, produits }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
+    const [tel, setTel] = useState('');
+    const [adresse, setAdresse] = useState('');
+    const [quantite, setQuantite] = useState('');
 
 
     const navigate = useNavigate();
@@ -55,17 +58,45 @@ const Header = ({ categories, roles, paniers, produits }) => {
         }
     };
 
-    const createBoutique = async (token) => {
-        try {
-            const resp = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/boutique`, {
-                headers: {
-                    Authorization: `Bearer ${token}`, // Inclure le token dans les en-têtes
-                },
-            });
-        } catch (error) {
-            setMessage('Une erreur est survenue lors de la creation de boutique.');
+    const handleCommande = async (e) => {
+        e.preventDefault()
+        const produits = []
+        panier.forEach((pa) => {
+            let produit = {
+                "id": pa.id,
+                "quantiteProduit": 1,
+                "prixProduit": pa.prix,
+            }
+            produits.push(produit)
+        })
+        const commande = {
+            "nom": nom,
+            "prenom": prenom,
+            "email": email,
+            "telephone": tel,
+            "adresse": adresse,
+            "password": password,
+            "produits": produits
         }
+        localStorage.removeItem('panier')
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/orders/store`, commande)
+            setMessage(response.data.message)
+            setNom('')
+            setPrenom('')
+            setAdresse('')
+            setTel('')
+            setEmail('')
+            setPassword('')
+        } catch (error) {
+            console.error("Erreur lors de la commande:", error);
+            setMessage('Une erreur est survenue lors de la commande.');
+        }
+        window.location.reload();
+
     }
+
+
     const handleConnexion = async (e) => {
         e.preventDefault();
         const utilisateur = {
@@ -74,24 +105,37 @@ const Header = ({ categories, roles, paniers, produits }) => {
         };
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/login`, utilisateur)
+            setUser(null);
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/login`, utilisateur);
             const { token, user } = response.data;
-            accountService.saveToken(token);
-            localStorage.setItem('userId', user.id);
+
+            setUser(null);
+
 
 
             if (token) {
+                accountService.saveToken(token);
+                localStorage.setItem('userId', user.id);
                 setUser(user);
 
 
 
                 if (user.role === "client") {
                     navigate(`/compte/profile`);
+                    // Actualiser la page
+                    window.location.reload();
                 } else if (user.role === "vendeur") {
                     navigate(`/userDashboard/profile`);
                     // createBoutique(token)
+                    // Actualiser la page
+                    window.location.reload();
                 } else {
                     alert(`Rôle inconnu: ${user.role}`);
+                    // Actualiser la page
+                    window.location.reload();
                 }
 
                 const modal = document.getElementById('connexion');
@@ -103,6 +147,8 @@ const Header = ({ categories, roles, paniers, produits }) => {
                 const modalTrigger = document.getElementById('connexionTrigger');
                 modalTrigger.click();
             }
+
+
 
         } catch (error) {
             setMessage('Une erreur est survenue lors de la connexion.');
@@ -147,19 +193,18 @@ const Header = ({ categories, roles, paniers, produits }) => {
 
     const calculerTotal = () => {
         let total = 0;
-        paniers.forEach(panier => {
-            const produitsPanier = panier.produits;
-            produitsPanier.forEach(prodPanier => {
-                const produit = produits.find(p => p.id === prodPanier.produitId);
-                if (produit) {
-                    total += produit.prix * prodPanier.quantite;
+        if (panier) {
+            panier.forEach(pa => {
+                if (pa) {
+                    total += pa.prix * 1;
                 } else {
                     total = 0
                 }
             });
-        });
+        }
         setTotal(total);
     };
+
 
 
     useEffect(() => {
@@ -184,7 +229,7 @@ const Header = ({ categories, roles, paniers, produits }) => {
         } else {
             setUser(null); // Si pas de token ou d'ID, définir l'utilisateur sur null
         }
-    }, [paniers, produits, roles]);
+    }, [produits, roles]);
 
 
 
@@ -466,6 +511,102 @@ const Header = ({ categories, roles, paniers, produits }) => {
                     </div>
                 </div>
             </div>
+            {/* modal commande */}
+            <div className="modal fade" id="commander" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h1 className="modal-title fs-5" id="exampleModalLabel">Connexion</h1>
+                            <button id="connexionTrigger" type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            <form>
+                                <div className="mb-3">
+                                    <label htmlFor="prenomCo" className="form-label">Prenom</label>
+                                    <input
+                                        type="text"
+                                        name='prenomCo'
+                                        className="form-control"
+                                        id="prenomCo"
+                                        value={prenom}
+                                        onChange={(e) => setPrenom(e.target.value)}
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="nomCo" className="form-label">Nom</label>
+                                    <input
+                                        type="text"
+                                        name='nomCo'
+                                        className="form-control"
+                                        id="nomCo"
+                                        value={nom}
+                                        onChange={(e) => setNom(e.target.value)}
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="telCo" className="form-label">Telephone</label>
+                                    <input
+                                        type="text"
+                                        name='telCo'
+                                        className="form-control"
+                                        id="telCo"
+                                        value={tel}
+                                        onChange={(e) => setTel(e.target.value)}
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="adresseCo" className="form-label">Adresse</label>
+                                    <input
+                                        type="text"
+                                        name='adresseCo'
+                                        className="form-control"
+                                        id="adresseCo"
+                                        value={adresse}
+                                        onChange={(e) => setAdresse(e.target.value)}
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="emailCo" className="form-label">Email</label>
+                                    <input
+                                        type="email"
+                                        name='emailCo'
+                                        className="form-control"
+                                        id="emailCo"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                    />
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="passwordCo" className="form-label">Password</label>
+                                    <input
+                                        type="password"
+                                        name='passwordCo'
+                                        className="form-control"
+                                        id="passwordCo"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                    />
+                                </div>
+
+
+                                <div className="col-12 d-flex ">
+                                    <div className="col-8">
+                                        <button
+                                            className="btn btn-primary"
+                                            onClick={handleCommande}
+                                        >
+                                            Commander
+                                        </button>
+                                    </div>
+                                    <div className="col-4 d-flex justify-content-end">
+                                        <button type="button" className="btn btn-link link-underline link-underline-opacity-0" data-bs-dismiss="modal" aria-label="Close">Annuler</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {/* Offcanvas Panier */}
             <div className="offcanvas offcanvas-end bg-white" tabIndex="-1" id="panier" aria-labelledby="offcanvasRightLabel">
@@ -475,30 +616,19 @@ const Header = ({ categories, roles, paniers, produits }) => {
                 </div>
                 <div className="offcanvas-body">
                     <div className="row">
-                        {paniers.map((panier, index) => {
-                            const produitsPanier = panier.produits.map((product) => product);
+                        {panier ? panier.map((produit, index) => {
 
-                            // Filtrer les produits dans la table produits à partir des ids du panier
-                            const produitsFiltre = produits.filter(produit =>
-                                produitsPanier.find((prodPanier) => prodPanier.produitId === produit.id)
+                            return (
+                                <ProduitPanier
+                                    updateProduitQuantite={updateProduitQuantite}
+                                    key={index}
+                                    produit={produit}
+                                    quantite={1} // Quantité associée au produit dans le panier
+                                />
                             );
-
-
-
-                            // Retourner un élément pour chaque produit filtré
-                            return produitsFiltre.map((produitFit, idx) => {
-                                const produitPanier = produitsPanier.find(prodPanier => prodPanier.produitId === produitFit.id);
-
-                                return (
-                                    <ProduitPanier
-                                        updateProduitQuantite={updateProduitQuantite}
-                                        key={idx}
-                                        produit={produitFit}
-                                        quantite={produitPanier ? produitPanier.quantite : 0} // Quantité associée au produit dans le panier
-                                    />
-                                );
-                            });
-                        })}
+                        }) :
+                            null
+                        }
                     </div>
 
                     <div className="row">
@@ -513,7 +643,13 @@ const Header = ({ categories, roles, paniers, produits }) => {
                     </div>
                     <div className="position-absolute bottom-0 start-0 end-0 p-3">
                         <div className="col-12">
-                            <button className='btn btn-primary w-100'>Commander</button>
+                            <button
+                                className='btn btn-primary w-100'
+                                data-bs-dismiss="modal"
+                                data-bs-toggle="modal"
+                                type='button'
+                                data-bs-target="#commander"
+                            >Commander</button>
                         </div>
                     </div>
                 </div>

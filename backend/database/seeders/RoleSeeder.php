@@ -18,7 +18,7 @@ class RoleSeeder extends Seeder
 
         ]);
         DB::table('roles')->insert([
-            'nomRole' => "Vendeur",
+            'nomRole' => "vendeur",
         ]);
     }
 }

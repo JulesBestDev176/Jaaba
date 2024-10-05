@@ -4,7 +4,7 @@ import Header from './Header'
 import Footer from './Footer'
 import axios from 'axios'
 
-const Container = ({ categories, utilisateurs, paniers, produits }) => {
+const Container = ({ categories, utilisateurs, produits, panier }) => {
 
     const [roles, setRoles] = useState([])
 
@@ -25,7 +25,7 @@ const Container = ({ categories, utilisateurs, paniers, produits }) => {
 
     return (
         <>
-            <Header categories={categories} utilisateurs={utilisateurs} roles={roles} paniers={paniers} produits={produits} />
+            <Header panier={panier} categories={categories} utilisateurs={utilisateurs} roles={roles} produits={produits} />
             <div style={{ marginTop: '200px' }}> {/* Ajuste la valeur selon la hauteur de ton header */}
                 <Outlet />
             </div>

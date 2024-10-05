@@ -10,6 +10,9 @@ const PageBoutique = () => {
     const [description, setDescription] = useState('')
     const [telephone, setTelephone] = useState('')
     const [message, setMessage] = useState('');
+    const defaultImage = new URL("../assets/images/auto.jpg", import.meta.url).href;
+    const [photoUrl, setPhotoUrl] = useState(defaultImage)
+    const [logo, setLogo] = useState('')
 
 
     const fetchBoutique = async () => {
@@ -28,6 +31,9 @@ const PageBoutique = () => {
             setDescription(data.description);
             setAdresse(data.adresse);
             setTelephone(data.telephone)
+            setLogo(data.logo)
+            let imageUrl = new URL(`../../../backend/storage/app/public/images/profil/${boutique.photo}`, import.meta.url).href
+            setPhotoUrl(imageUrl);
         } catch (error) {
             console.error("Erreur lors de la récupération de la boutique :", error);
         }
@@ -72,7 +78,6 @@ const PageBoutique = () => {
         fetchBoutique();
     }, [])
 
-    const imageUrl = new URL(`../../../backend/storage/app/public/images/profil/jules.jpg`, import.meta.url).href;
 
     return (
         <div>
@@ -80,7 +85,7 @@ const PageBoutique = () => {
                 <div className="d-flex justify-content-center">
                     <div className="position-relative">
                         <img
-                            src={imageUrl}
+                            src={!logo ? defaultImage : photoUrl}
                             className="rounded-circle border border-success"
                             style={{ width: "150px", height: "150px", objectFit: "cover" }}
                             alt="User avatar"
